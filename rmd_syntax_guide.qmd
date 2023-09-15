@@ -1,0 +1,100 @@
+---
+title: ""
+format: html
+editor: visual
+---
+
+# Rmd/Qmd Text Editor
+
+*Note: Quarto Markdown is basically the same as R Markdown. The main difference is that it's language-agnostic. The R community is (supposedly) moving to quarto, but there's no plan to deprecate Rmd!*
+
+In Rmd/Qmd, it's nice to do some of the formatting in visual mode, then the formatted code automatically appears when you switch back to source mode. Here are some more things you can do in visual mode:
+
+-   The Format dropdown offers point-and-click formatting for stuff like italics, subscripts, bullet list, etc
+
+-   The Insert dropdown has a place for special characters (unicode) like arrows and greek letters.
+
+# LaTeX Syntax
+
+To insert LaTeX equations, enclose with single `$` for inline mathematics, and double `$$` for displayed equations. Do NOT leave a space between the `$` and your mathematical notation.
+
+|                                                     |                                                                |
+|---------------------------------|---------------------------------------|
+| $\le$                                               | `\le`                                                          |
+| $<$                                                 | `<`                                                            |
+| $\ge$                                               | `\ge`                                                          |
+| $>$                                                 | `>`                                                            |
+| $y_i$                                               | `y_i`                                                          |
+| $y^2$                                               | `y^2`                                                          |
+| $y_{ij}$                                            | `y_{ij}` (enclose longer subscripts/superscripts in brackets)  |
+| $\sqrt{y}$                                          | `\sqrt{y}`                                                     |
+| $\frac{4}{2}$                                       | `\frac{4}{2}`                                                  |
+| $\left(\frac{big-parentheses}{around-math} \right)$ | enclose with `\left(` and `\right)`                            |
+| $\frac{\partial f}{\partial x}$                     | `$\frac{\partial f}{\partial x}$`                              |
+| $\sim$                                              | `\sim`                                                         |
+| $\lambda$                                           | `\lambda` (spell out any greek letter: gamma, delta, eta, etc) |
+| $\cdots$                                            | `\cdots`(center dots)                                          |
+| $\ldots$                                            | `\ldots` (lower dots)                                          |
+| $a \mid b$                                          | `a \mid b`                                                     |
+| $\sum_{0}^{n}$                                      | `\sum_{0}^{n}`                                                 |
+| $\int_{-\infty}^{\infty}$                           | `\int_{-\infty}^{\infty}`                                      |
+| $\{ blah \}$                                        | `\{` `\}`                                                      |
+| $[blah]$                                            | `[` `]`                                                        |
+| $\log(x)$                                           | `\log(x)`                                                      |
+| $\sin(x)$                                           | `\sin(x)`                                                      |
+
+To specify a non-default font, or make bold, wrap with:
+
+-   `\textrm{blah}` for $\textrm{serif (roman)}$
+
+-   `\mathrm{blah}` for $\mathrm{math\ font}$
+
+-   `\boldsymbol{blah}` for $\boldsymbol{bold}$
+
+Remember:
+
+-   notate scalars as lowercase math font: `{\mathrm{\omega}` $\rightarrow$ $\mathrm{\omega}$
+-   notate scalars as lowercase math bold font: `\boldsymbol{\mathrm{\omega}` $\rightarrow$ $\boldsymbol{\mathrm{\omega}}$
+-   notate matrices as uppercase math bold font: `\boldsymbol{\mathrm{\Omega}}` $\rightarrow$ $\boldsymbol{\mathrm{\Omega}}$
+-   write distribution names in plain text: `\textrm{normal}` $\rightarrow$ $\textrm{normal}$
+
+Putting it together:
+
+`$$y_i \sim gamma \left( \frac{\mu^2}{\sigma^2}, \frac{\mu}{\sigma^2} \right)$$` $\rightarrow$
+
+$$y_i \sim \textrm{gamma} \left( \frac{\mu^2}{\sigma^2}, \frac{\mu}{\sigma^2} \right) $$
+
+Here's a link to a [massive list of LaTeX symbol syntax](https://www.cmor-faculty.rice.edu/~heinken/latex/symbols.pdf)
+
+# Plotmath Expression Syntax
+
+This is probably only relevant for figure labels
+
+|                     |                                                                                                                              |
+|------------------|------------------------------------------------------|
+| λ                   | `expression(lambda)`                                                                                                         |
+| y $\le$ 5           | `expression("y"<= "5")`                                                                                                      |
+| y~i~                | `expression(y[i])`                                                                                                           |
+| x^2^                | `expression(x^2)`                                                                                                            |
+| x^2^ + 5            | `expression(x^2~"+ 5"))` ... to add characters after a superscript, end the superscript with a `*` (no space) or `~` (space) |
+| P(Y \< y \| $\phi$) | `expression(paste("P(Y", \<, "y | ", phi,")"))` ... expression(paste("blah", symbol, "blah", symbol, "blah))                 |
+
+Use case example:
+
+```{r, echo=F}
+x <- seq(-4, 4, by=0.01)
+y <- dnorm(x)
+
+plot(x, y, type = "l", xlab = expression(y[i]), ylab = expression(paste("[",y,"]")))
+```
+
+...or, you could download the latex2exp package and never use plotmath expressions again:
+
+```{r, echo=F}
+x <- seq(-4, 4, by=0.01)
+y <- dnorm(x)
+
+plot(x, y, type = "l", xlab = expression(y[i]), ylab = latex2exp::TeX("$\\[y\\]$"))
+```
+
+Just wrap your LaTeX code in `Tex("$blah$")` and double-escape everything that was single-escaped (i.e. `\\`). The code used to build the y-axis label was `ylab=latex2exp::TeX("$\\[y\\]$")`... ok I know square brackets aren't escaped in the notation list above, but for some reason in this package they were. Rough example, but good to know this library might have some syntax quirks.
